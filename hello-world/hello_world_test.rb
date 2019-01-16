@@ -1,6 +1,7 @@
 begin
   gem 'minitest', '>= 5.0.0'
   require 'minitest/autorun'
+  require 'minitest/pride'
   require_relative 'hello_world'
 rescue Gem::LoadError => e
   puts "\nMissing Dependency:\n#{e.backtrace.first} #{e.message}"
