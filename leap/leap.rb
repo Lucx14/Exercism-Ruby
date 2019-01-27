@@ -1,4 +1,4 @@
-class Year
+module Year
 
   def self.leap?(year)
     one = year % 4 == 0
