@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative 'leap'
 
 # Common test data version: 1.4.0 3134d31
@@ -18,22 +19,22 @@ class YearTest < Minitest::Test
   end
 
   def test_year_divisible_by_4_not_divisible_by_100_leap_year
-    skip
+    # skip
     assert Year.leap?(1996), "Expected 'true', 1996 is a leap year."
   end
 
   def test_year_divisible_by_100_not_divisible_by_400_common_year
-    skip
+    # skip
     refute Year.leap?(2100), "Expected 'false', 2100 is not a leap year."
   end
 
   def test_year_divisible_by_400_leap_year
-    skip
+    # skip
     assert Year.leap?(2000), "Expected 'true', 2000 is a leap year."
   end
 
   def test_year_divisible_by_200_not_divisible_by_400_common_year
-    skip
+    # skip
     refute Year.leap?(1800), "Expected 'false', 1800 is not a leap year."
   end
 end
