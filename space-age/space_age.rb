@@ -57,17 +57,11 @@ class SpaceAge
   private
 
   def days_to_seconds(years)
-    # 31557600 seconds
-    # p years * SpaceAge::SECONDS_IN_YEAR
-    # p years * 365.25 * 24 * 60 * 60
-    # p years * SpaceAge::SECONDS_IN_YEAR
-    years * 365.25 * 24 * 60 * 60
-    # years * SpaceAge::SECONDS_IN_YEAR
+    years * SpaceAge::SECONDS_IN_YEAR
   end
 
   def age(planet)
-    # p seconds/days_to_seconds(SpaceAge::ORBITAL_PERIOD[planet])
-    seconds/days_to_seconds(SpaceAge::ORBITAL_PERIOD[planet])
+    seconds/days_to_seconds(SpaceAge::ORBITAL_PERIOD[planet]).to_f
   end
 
 end
