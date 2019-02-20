@@ -15,7 +15,7 @@ class HighScores
   end
 
   def personal_top
-    scores.sort.reverse.first(3)
+    scores.max(3)
   end
 
   def report
@@ -39,10 +39,4 @@ class HighScores
   def pb
     "That's your personal best!"
   end
-
-
-
-
-
-
 end
