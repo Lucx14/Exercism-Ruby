@@ -8,6 +8,6 @@ class Series
 
   def slices(n)
     raise ArgumentError if n > sample.length
-    sample.split('').each_cons(n).to_a.map(&:join)
+    sample.split('').each_cons(n).map(&:join)
   end
 end
