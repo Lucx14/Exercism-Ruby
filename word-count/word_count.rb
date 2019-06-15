@@ -5,20 +5,20 @@ class Phrase
   end
 
   def word_count
-    word_count = Hash.new { |hash, key| hash[key] = 0 }
-    string_to_array(sentence).each do |word|
+    count = Hash.new(0)
+    words.each do |word|
       remove_quotes(word)
-      word_count[word] += 1
+      count[word] += 1
     end
-    word_count
+    count
   end
 
   private
 
   attr_reader :sentence
 
-  def string_to_array(string)
-    string.lstrip.downcase.split(/[^'\w]+/)
+  def words
+    sentence.lstrip.downcase.split(/[^'\w]+/)
   end
 
   def remove_quotes(string)
