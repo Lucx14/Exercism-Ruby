@@ -18,7 +18,6 @@ class Phrase
   attr_reader :sentence
 
   def words
-    # sentence.lstrip.downcase.split(/[^'\w]+/)
     sentence.downcase.scan(/['\w]+/)
   end
 
