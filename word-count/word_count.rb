@@ -6,10 +6,7 @@ class Phrase
 
   def word_count
     count = Hash.new(0)
-    words.each do |word|
-      remove_quotes(word)
-      count[word] += 1
-    end
+    words.each { |word| count[word] += 1 }
     count
   end
 
@@ -18,10 +15,6 @@ class Phrase
   attr_reader :sentence
 
   def words
-    sentence.downcase.scan(/['\w]+/)
-  end
-
-  def remove_quotes(string)
-    string.gsub!(/\A'|'\Z/, '')
+    sentence.downcase.scan(/\b['\w]+\b/)
   end
 end
