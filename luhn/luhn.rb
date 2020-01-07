@@ -6,9 +6,9 @@ class Luhn
   end
 
   def valid?
-    validate_length &&
-    validate_chars && 
-    validate_luhn
+    valid_length? &&
+    valid_chars? &&
+    valid_luhn?
   end
 
   def self.valid?(number)
@@ -17,7 +17,7 @@ class Luhn
 
   private
 
-  def validate_luhn
+  def valid_luhn?
     numbers.reverse.each_with_index.map do |number, index|
       if index % 2 != 0
         num = (number * 2)
@@ -28,11 +28,11 @@ class Luhn
     end.sum % 10 == 0
   end
 
-  def validate_chars
+  def valid_chars?
     number.strip.scan(/\D/).reject{|x| x =~ /\s+/}.empty?
   end
 
-  def validate_length
+  def valid_length?
     number.strip.length > 1
   end
 
