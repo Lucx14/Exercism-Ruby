@@ -10,7 +10,7 @@ class Luhn
     valid_chars? &&
     valid_luhn?
   end
-  # Test comment
+
   def self.valid?(number)
     new(number).valid?
   end
