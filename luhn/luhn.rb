@@ -18,7 +18,7 @@ class Luhn
   private
 
   def valid_luhn?
-    numbers.reverse.each_with_index.map do |number, index|
+    numbers.reverse.map.with_index do |number, index|
       if index % 2 != 0
         num = (number * 2)
         num > 9 ? num - 9 : num
