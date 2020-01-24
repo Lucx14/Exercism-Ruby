@@ -1,6 +1,7 @@
 class Clock
   MINUTES_PER_HOUR = 60
   MINUTES_PER_DAY = 1440
+  TIME_FORMAT = "%02d:%02d"
 
   attr_reader :hour, :minute
 
@@ -10,8 +11,7 @@ class Clock
   end
 
   def to_s
-    total_minutes.divmod(MINUTES_PER_HOUR)
-      .map{ |n| format_number(n)}.join(':')
+    TIME_FORMAT % total_minutes.divmod(MINUTES_PER_HOUR)
   end
 
   def +(clock)
@@ -26,14 +26,21 @@ class Clock
     self.to_s == clock.to_s
   end
 
+  # def ==(clock)
+  #   self.class == clock.class &&
+  #   hour == clock.hour &&
+  #   minute == clock.minute
+  # end
+  # alias :eql? :==
+
+  # def hash
+  #   [@hour, @minute].hash
+  # end
+
   private
 
   def total_minutes
     (hour * MINUTES_PER_HOUR + minute) % MINUTES_PER_DAY
-  end
-
-  def format_number(n)
-    n < 10 ? "0#{n}" : "#{n}"
   end
 end
 
