@@ -13,7 +13,7 @@ class Clock
   def to_s
     TIME_FORMAT % total_minutes.divmod(MINUTES_PER_HOUR)
   end
-x
+
   def +(clock)
     Clock.new(hour: (hour + clock.hour), minute: (minute + clock.minute))
   end
