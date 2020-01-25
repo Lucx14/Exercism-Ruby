@@ -23,19 +23,9 @@ class Clock
   end
 
   def ==(clock)
-    self.to_s == clock.to_s
+    self.class == clock.class &&
+    to_s == clock.to_s
   end
-
-  # def ==(clock)
-  #   self.class == clock.class &&
-  #   hour == clock.hour &&
-  #   minute == clock.minute
-  # end
-  # alias :eql? :==
-
-  # def hash
-  #   [@hour, @minute].hash
-  # end
 
   private
 
