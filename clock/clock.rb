@@ -28,7 +28,7 @@ class Clock
   alias :eql? :==
 
   def hash
-    [@time].hash
+    [time].hash
   end
 
   private
