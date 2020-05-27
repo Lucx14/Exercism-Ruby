@@ -60,7 +60,7 @@ class RobotTest < Minitest::Test
 
   # This test assumes you're using Kernel.rand as a source of randomness
   def test_different_name_when_chosen_name_is_taken
-    skip
+    # skip
     same_seed = 1234
     Kernel.srand same_seed
     robot_1 = Robot.new
