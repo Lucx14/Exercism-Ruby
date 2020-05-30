@@ -1,61 +1,29 @@
 class Crypto
-  attr_reader :text
   def initialize(text)
-    @text = text
+    @text = normalize(text)
   end
 
   def ciphertext
-    normalized_text = text.downcase.gsub(/[^a-z0-9]/, '')
-    if normalized_text.length <= 1
-      return normalized_text
-    end
-    # p normalized_text
-    col = Math.sqrt(normalized_text.length).ceil
-    # p col
-    str = normalized_text.chars.each_slice(col).map(&:join).map{|x| x.ljust(col) }
-    # p str
-    row = str.length
-    # p row
-    encoded = ''
-    while encoded.length < normalized_text.length
-      str.each { |set| encoded << set.slice!(0) }
-      # p encoded
-    end
-    xxx = encoded.gsub(/[^a-z]/, '')
-    # p xxx
-    diff = (col * row) - normalized_text.length
-    # p diff
-    # end
-    # fin = xxx.strip.chars.each_slice(row).map
-    # p fin
-    # p fin.size
-    final = []
-    yy = []
-    f = xxx.chars.each_slice(row).each_with_index do |x, i|
-      # p x 
-      # p i
-      if i + 1 > col - diff
-        if x.length == row
-          yy << x.slice!(-1)
-        end
-        x << ' '
-      end
+    return text if text.length <= 1
 
-      if x.length == row
-        final << x.join('')
-      else
-        final << x.unshift(yy.pop).join('')
-      end
-    end
+    grid.transpose.map(&:join).join(' ')
+  end
 
-    # p final
-    final.join(' ')
+  private
 
-    
+  attr_reader :text
 
-    # p fin.join(' ')
-    # fin.join(' ')
+  def normalize(text)
+    text.downcase.gsub(/[^a-z0-9]/, '')
+  end
 
-    # "clu hlt io "
+  def chunk_size
+    Math.sqrt(text.length).ceil
+  end
+
+  def grid
+    grid = text.chars.each_slice(chunk_size).to_a
+    grid.last << ' ' while grid.last.size < chunk_size
+    grid
   end
 end
