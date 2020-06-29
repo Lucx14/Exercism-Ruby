@@ -9,26 +9,28 @@ class Cipher
   end
 
   def encode(plaintext)
-    zz = plaintext.split('').each_with_index.map { |_, i| ALPHABET.index(key[i]) }
-
-    xx = plaintext.split('').each_with_index.map do |letter, i|
-      ALPHABET[(ALPHABET.index(letter) + zz[i]) % 26]
-    end.join
-    xx
+    plaintext
+      .split('')
+      .each_with_index
+      .map { |letter, i| ALPHABET[(ALPHABET.index(letter) + shift_pattern(plaintext)[i]) % 26] }
+      .join
   end
 
   def decode(ciphertext)
-    zz = ciphertext.split('').each_with_index.map { |_, i| ALPHABET.index(key[i]) }
-
-    xx = ciphertext.split('').each_with_index.map do |letter, i|
-      ALPHABET[ALPHABET.index(letter) - zz[i]]
-    end.join('')
-    xx
+    ciphertext
+      .split('')
+      .each_with_index
+      .map { |letter, i| ALPHABET[ALPHABET.index(letter) - shift_pattern(ciphertext)[i]] }
+      .join
   end
 
   private
 
   def validate_key(key)
     raise ArgumentError unless key.length.positive? && key.scan(/[^a-z]/).empty?
+  end
+
+  def shift_pattern(text)
+    text.split('').each_with_index.map { |_, i| ALPHABET.index(key[i]) }
   end
 end
