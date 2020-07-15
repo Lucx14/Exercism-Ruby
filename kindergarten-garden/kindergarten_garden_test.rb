@@ -48,59 +48,59 @@ class TestFullGarden < Minitest::Test
   end
 
   def test_charlie
-    skip
+    # skip
     assert_equal [:violets, :violets, :clover, :grass], garden.charlie
   end
 
   def test_david
-    skip
+    # skip
     assert_equal [:radishes, :violets, :clover, :radishes], garden.david
   end
 
   def test_eve
-    skip
+    # skip
     assert_equal [:clover, :grass, :radishes, :grass], garden.eve
   end
 
   def test_fred
-    skip
+    # skip
     assert_equal [:grass, :clover, :violets, :clover], garden.fred
   end
 
   def test_ginny
-    skip
+    # skip
     assert_equal [:clover, :grass, :grass, :clover], garden.ginny
   end
 
   def test_harriet
-    skip
+    # skip
     assert_equal [:violets, :radishes, :radishes, :violets], garden.harriet
   end
 
   def test_ileana
-    skip
+    # skip
     assert_equal [:grass, :clover, :violets, :clover], garden.ileana
   end
 
   def test_joseph
-    skip
+    # skip
     assert_equal [:violets, :clover, :violets, :grass], garden.joseph
   end
 
   def test_kincaid
-    skip
+    # skip
     assert_equal [:grass, :clover, :clover, :grass], garden.kincaid
   end
 
   def test_larry
-    skip
+    # skip
     assert_equal [:grass, :violets, :clover, :violets], garden.larry
   end
 end
 
 class DisorderedTest < Minitest::Test
   def setup
-    skip
+    # skip
     diagram = "VCRRGVRG\nRVGCCGCV"
     students = %w(Samantha Patricia Xander Roger)
     @garden = Garden.new(diagram, students)
@@ -109,22 +109,22 @@ class DisorderedTest < Minitest::Test
   attr_reader :garden
 
   def test_patricia
-    skip
+    # skip
     assert_equal [:violets, :clover, :radishes, :violets], garden.patricia
   end
 
   def test_roger
-    skip
+    # skip
     assert_equal [:radishes, :radishes, :grass, :clover], garden.roger
   end
 
   def test_samantha
-    skip
+    # skip
     assert_equal [:grass, :violets, :clover, :grass], garden.samantha
   end
 
   def test_xander
-    skip
+    # skip
     assert_equal [:radishes, :grass, :clover, :violets], garden.xander
   end
 end
@@ -143,7 +143,7 @@ class TwoGardensDifferentStudents < Minitest::Test
   end
 
   def test_bob_and_charlie_per_garden
-    skip
+    # skip
     assert_equal [:radishes, :radishes, :grass, :clover], garden_1.bob
     assert_equal [:violets, :clover, :radishes, :violets], garden_2.bob
     assert_equal [:grass, :violets, :clover, :grass], garden_1.charlie

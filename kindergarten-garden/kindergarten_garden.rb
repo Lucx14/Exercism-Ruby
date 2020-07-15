@@ -1,5 +1,5 @@
 class Garden
-  attr_reader :pot_layout
+  attr_reader :pot_layout, :students, :breakdown
 
   MAPPING = {
     "V": :violets,
@@ -8,13 +8,84 @@ class Garden
     "G": :grass
   }.freeze
 
-  def initialize(pot_layout)
+  DEFAULT_STUDENTS = %w[Alice Bob Charlie David Eve Fred Ginny Harriet Ileana Joseph Kincaid Larry].freeze
+
+  def initialize(pot_layout, students = DEFAULT_STUDENTS)
     @pot_layout = pot_layout
+    @students = format_students(students)
+    @breakdown = organise(pot_layout, format_students(students))
   end
 
-  def alice
+  def method_missing method, *args, &block
+    return super method, *args, &block unless students.include?(method)
+
+    self.class.send(:define_method, method) do
+      # p method
+      # p breakdown
+      # p "writing " + method.to_s.gsub(/^coding_/, '').to_s
+      # p "hello I am here!!!"
+      breakdown[method]
+    end
+    self.send method, *args, &block
+  end
+
+
+  # def alice
+  #   # p students
+  #   arr = []
+  #   pot_layout.split("\n").map do |a|
+  #     row = []
+  #     a.split('').each_slice(2) do |x|
+  #       row << x.join
+  #     end
+  #     arr << row
+  #   end
+  #   breakdown_by_student = arr.transpose.map { |cc| cc.join.split('') }
+
+  #   cl = breakdown_by_student.map do |stu|
+  #     stu.map { |flower| MAPPING[flower.to_sym] }
+  #   end
+
+  #   # thats it!
+  #   cl[0]
+  # end
+
+  # def bob
+  #   p students
+  #   arr = []
+  #   pot_layout.split("\n").map do |a|
+  #     row = []
+  #     a.split('').each_slice(2) do |x|
+  #       row << x.join
+  #     end
+  #     arr << row
+  #   end
+  #   breakdown_by_student = arr.transpose.map { |cc| cc.join.split('') }
+
+  #   cl = breakdown_by_student.map do |stu|
+  #     stu.map { |flower| MAPPING[flower.to_sym] }
+  #   end
+
+  #   # thats it!
+  #   breakdown = {}
+  #   # p cl.last
+  #   cl.each_with_index { |x, i| breakdown[students[i]] = x }
+  #   # breakdown isa now the queryable object
+  #   p breakdown
+  #   cl[1]
+
+  # end
+
+  private
+
+  def format_students(students)
+    students.sort.map { |student| student.downcase.to_sym }
+  end
+
+  def organise(layout, students)
+    # p students
     arr = []
-    pot_layout.split("\n").map do |a|
+    layout.split("\n").map do |a|
       row = []
       a.split('').each_slice(2) do |x|
         row << x.join
@@ -28,46 +99,12 @@ class Garden
     end
 
     # thats it!
-    cl[0]
+    breakdown = {}
+    # p cl.last
+    cl.each_with_index { |x, i| breakdown[students[i]] = x }
+    # breakdown isa now the queryable object
+    breakdown
+    # cl[1]
   end
 
-
-  def bob
-    arr = []
-    pot_layout.split("\n").map do |a|
-      row = []
-      a.split('').each_slice(2) do |x|
-        row << x.join
-      end
-      arr << row
-    end
-    breakdown_by_student = arr.transpose.map { |cc| cc.join.split('') }
-
-    cl = breakdown_by_student.map do |stu|
-      stu.map { |flower| MAPPING[flower.to_sym] }
-    end
-
-    # thats it!
-    cl[1]
-
- 
-  end
 end
-
-   # p pot_layout.split("\n")
-    # row_1 = pot_layout.split("\n")[0]
-    # row_2 = pot_layout.split("\n")[1]
-
-    # p row_1.split('')
-    # p row_1.split('').each_slice(2) { |x| p x }
-    # [:radishes, :clover, :grass, :grass]
-
-# 24 pots on each row
-# violets, Radish, Clover, Grass
-# Alice, Bob, Charlie, David,
-# Eve, Fred, Ginny, Harriet,
-# Ileana, Joseph, Kincaid, and Larry.
-# V: violets
-# R: radishes
-# C: clover
-# G: grass
