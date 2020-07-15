@@ -1,6 +1,8 @@
-class Garden
-  attr_reader :pot_layout, :students, :breakdown
+# frozen_string_literal: true
 
+# Kindergarten-garden
+class Garden
+  DEFAULT_STUDENTS = %w[Alice Bob Charlie David Eve Fred Ginny Harriet Ileana Joseph Kincaid Larry].freeze
   MAPPING = {
     "V": :violets,
     "R": :radishes,
@@ -8,103 +10,49 @@ class Garden
     "G": :grass
   }.freeze
 
-  DEFAULT_STUDENTS = %w[Alice Bob Charlie David Eve Fred Ginny Harriet Ileana Joseph Kincaid Larry].freeze
+  private
 
-  def initialize(pot_layout, students = DEFAULT_STUDENTS)
-    @pot_layout = pot_layout
+  attr_reader :students, :breakdown
+
+  def initialize(layout, students = DEFAULT_STUDENTS)
     @students = format_students(students)
-    @breakdown = organise(pot_layout, format_students(students))
+    @breakdown = organise(group_plants_by_student(layout), format_students(students))
   end
 
-  def method_missing method, *args, &block
-    return super method, *args, &block unless students.include?(method)
+  def method_missing(method, *args, &block)
+    return super unless students.include?(method)
 
     self.class.send(:define_method, method) do
-      # p method
-      # p breakdown
-      # p "writing " + method.to_s.gsub(/^coding_/, '').to_s
-      # p "hello I am here!!!"
       breakdown[method]
     end
-    self.send method, *args, &block
+    send method, *args, &block
   end
 
-
-  # def alice
-  #   # p students
-  #   arr = []
-  #   pot_layout.split("\n").map do |a|
-  #     row = []
-  #     a.split('').each_slice(2) do |x|
-  #       row << x.join
-  #     end
-  #     arr << row
-  #   end
-  #   breakdown_by_student = arr.transpose.map { |cc| cc.join.split('') }
-
-  #   cl = breakdown_by_student.map do |stu|
-  #     stu.map { |flower| MAPPING[flower.to_sym] }
-  #   end
-
-  #   # thats it!
-  #   cl[0]
-  # end
-
-  # def bob
-  #   p students
-  #   arr = []
-  #   pot_layout.split("\n").map do |a|
-  #     row = []
-  #     a.split('').each_slice(2) do |x|
-  #       row << x.join
-  #     end
-  #     arr << row
-  #   end
-  #   breakdown_by_student = arr.transpose.map { |cc| cc.join.split('') }
-
-  #   cl = breakdown_by_student.map do |stu|
-  #     stu.map { |flower| MAPPING[flower.to_sym] }
-  #   end
-
-  #   # thats it!
-  #   breakdown = {}
-  #   # p cl.last
-  #   cl.each_with_index { |x, i| breakdown[students[i]] = x }
-  #   # breakdown isa now the queryable object
-  #   p breakdown
-  #   cl[1]
-
-  # end
-
-  private
+  def respond_to_missing?(method, *)
+    method if students.include?(method) || super
+  end
 
   def format_students(students)
     students.sort.map { |student| student.downcase.to_sym }
   end
 
-  def organise(layout, students)
-    # p students
-    arr = []
-    layout.split("\n").map do |a|
+  def group_plants_by_student(layout)
+    organised_rows = []
+    layout.split("\n").map do |line|
       row = []
-      a.split('').each_slice(2) do |x|
-        row << x.join
+      line.split('').each_slice(2) do |pair|
+        row << pair.join
       end
-      arr << row
+      organised_rows << row
     end
-    breakdown_by_student = arr.transpose.map { |cc| cc.join.split('') }
-
-    cl = breakdown_by_student.map do |stu|
-      stu.map { |flower| MAPPING[flower.to_sym] }
-    end
-
-    # thats it!
-    breakdown = {}
-    # p cl.last
-    cl.each_with_index { |x, i| breakdown[students[i]] = x }
-    # breakdown isa now the queryable object
-    breakdown
-    # cl[1]
+    organised_rows.transpose.map { |plants| plants.join.split('') }
   end
 
+  def organise(layout, students)
+    breakdown = {}
+    layout
+      .map { |student| student.map { |flower| MAPPING[flower.to_sym] } }
+      .each_with_index { |x, i| breakdown[students[i]] = x }
+    breakdown
+  end
 end
