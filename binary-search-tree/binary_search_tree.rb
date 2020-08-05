@@ -2,30 +2,31 @@
 
 # Binary search tree
 class Bst
-  attr_reader :data, :nodes
-  attr_accessor :left, :right
+  attr_reader :data, :left, :right
 
-  def initialize(data, left = nil, right = nil)
+  def initialize(data)
     @data = data
-    @left = left
-    @right = right
-    @nodes = [data]
   end
 
   def insert(new_node)
-    nodes << new_node
-    if new_node <= data
-      left ? left.insert(new_node) : self.left = Bst.new(new_node)
-    else
-      right ? right.insert(new_node) : self.right = Bst.new(new_node)
-    end
+    new_node <= data ? go_left(new_node) : go_right(new_node)
   end
 
   def each(&block)
-    nodes.sort.each(&block)
+    return enum_for(:each) unless block_given?
+
+    @left&.each(&block)
+    yield data
+    @right&.each(&block)
   end
 
-  # def new_node(direction, new_node)
-  #   direction ? direction.insert(new_node) : self.direction = Bst.new(new_node)
-  # end
+  private
+
+  def go_left(new_node)
+    @left ? @left.insert(new_node) : @left = Bst.new(new_node)
+  end
+
+  def go_right(new_node)
+    @right ? @right.insert(new_node) : @right = Bst.new(new_node)
+  end
 end
