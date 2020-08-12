@@ -1,69 +1,93 @@
 # frozen_string_literal: true
 
 # Alphametics
-module Alphametics
+class Alphametics
   def self.solve(puzzle)
+    Alphametics.new(puzzle).find_result
+  end
 
-    # Init the result hash
+  def find_result
+    return {} if invalid_puzzle?
+
+    i = iterator
+    until unique_values? && equation_satisfied?
+      i -= 1
+      letters.each_with_index do |letter, index|
+        translation[letter] = i.to_s.split('')[index].to_i
+      end
+    end
+
+    translation.sort.to_h
+  end
+
+  private
+
+  attr_reader :translation, :question, :answer
+
+  def initialize(puzzle)
+    @translation = build_mapping(puzzle)
+    @question = build_question(puzzle)
+    @answer = build_answer(puzzle)
+  end
+
+  def build_mapping(puzzle)
     result = {}
     puzzle.gsub(/[^a-zA-Z]/i, '').split('').uniq.each do |letter|
       result[letter] = 9
     end
-
-    # i will start at 9999
-    iterator = result.map { |_, v| v }.join.to_i
-
-    keys = result.map { |k, _v| k }.sort
-
-    return {} if keys.length == 2
-
-    # isolate the addends
-    addends = puzzle.split('==')[0].strip.split('+').map(&:strip)
-
-    # calc maxiumum possible answer...
-    max_possible_answer = addends.map do |num|
-      num.split('').map { |yy| yy.gsub(/[a-zA-Z]/, result[yy].to_s) }.join
-    end.map(&:to_i).sum
-
-    # extract answer...
-    answer = puzzle.split('==')[1].strip
-
-    addends.each do |addend|
-      return {} if addend.length > answer.length
-    end
-
-    # determine first letter of answer....if possible
-    if answer.length == max_possible_answer.to_s.length
-      result[answer[0]] = max_possible_answer.to_s[0].to_i
-    end
-
-    # start loop....
-    until unique_values?(result) && equation_satisfied?(puzzle, result)
-
-      iterator -= 1
-      numbers = iterator.to_s.split('')
-      keys.each_with_index do |key, i|
-        result[key] = numbers[i].to_i
-      end
-    end
-
-    # return result if loop satisfied....
-    result.sort.to_h
+    result
   end
 
-  def self.unique_values?(hash)
-    hash.map { |_, v| v }.uniq.length == hash.length
+  def build_question(puzzle)
+    puzzle.split('==')[0].strip.split('+').map(&:strip)
   end
 
-  def self.equation_satisfied?(puzzle, hash)
-    question = puzzle.split('==')[0].strip.split('+').map(&:strip).map do |num|
-      num.split('').map { |yy| yy.gsub(/[a-zA-Z]/, hash[yy].to_s) }.join
-    end.map(&:to_i).sum
+  def build_answer(puzzle)
+    puzzle.split('==')[1].strip
+  end
 
-    answer = puzzle.split('==')[1].strip.split('').map do |num|
-      num.split('').map { |yy| yy.gsub(/[a-zA-Z]/, hash[yy].to_s) }.join
-    end.join.to_i
+  def iterator
+    translation.values.join.to_i
+  end
 
-    question == answer && answer.to_s.length == puzzle.split('==')[1].strip.length
+  def letters
+    translation.keys.sort
+  end
+
+  def numbers
+    translation.values.uniq.sort
+  end
+
+  def unique_values?
+    translation.values.uniq.length == translation.length
+  end
+
+  def equation_satisfied?
+    left_sum == right_sum && valid_answer?
+  end
+
+  def left_sum
+    question.map { |num| num.split('').map { |letter| translate(letter) }.join.to_i }.sum
+  end
+
+  def right_sum
+    answer.split('').map { |letter| translate(letter) }.join.to_i
+  end
+
+  def valid_answer?
+    right_sum.to_s.length == answer.length
+  end
+
+  def invalid_puzzle?
+    return true if letters.length == 2
+
+    question.each do |addend|
+      return true if addend.length > answer.length
+    end
+    false
+  end
+
+  def translate(letter)
+    translation[letter]
   end
 end
