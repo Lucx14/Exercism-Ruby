@@ -58,7 +58,7 @@ class AlphameticsTest < Minitest::Test
   # but an optimised solution can solve it fairly quickly.
   # (It's OK to submit your solution without getting this test to pass.)
   def test_puzzle_with_eight_letters
-    skip
+    # skip
     puzzle = 'SEND + MORE == MONEY'
     expected = { 'D' => 7, 'E' => 5, 'M' => 1, 'N' => 6,
                  'O' => 0, 'R' => 8, 'S' => 9, 'Y' => 2 }
@@ -69,7 +69,7 @@ class AlphameticsTest < Minitest::Test
   # but an optimised solution can solve it fairly quickly.
   # (It's OK to submit your solution without getting this test to pass.)
   def test_puzzle_with_ten_letters
-    skip
+    # skip
     puzzle = 'AND + A + STRONG + OFFENSE + AS + A + GOOD == DEFENSE'
     expected = { 'A' => 5, 'D' => 3, 'E' => 4, 'F' => 7,
                  'G' => 8, 'N' => 0, 'O' => 2, 'R' => 1,
