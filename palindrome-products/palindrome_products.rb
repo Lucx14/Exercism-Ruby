@@ -2,46 +2,38 @@
 
 # Palindrome Products
 class Palindromes
-  attr_reader :max_factor, :min_factor
-  def initialize(params = {})
-    @max_factor = params[:max_factor] || 1
-    @min_factor = params[:min_factor] || 1
+  Palindrome = Struct.new(:value, :factors)
+
+  attr_reader :max_factor, :min_factor, :palindromes
+
+  def initialize(max_factor:, min_factor: 1)
+    @max_factor = max_factor
+    @min_factor = min_factor
+    @palindromes ||= Hash.new { |hash, key| hash[key] = [] }
   end
 
   def generate
-    result = []
-    (min_factor..max_factor).each do |num|
-      (min_factor..max_factor).each { |num2| result << [num, num2] }
+    pairs.each do |pair|
+      product = pair.reduce(:*)
+      palindromes[product] << pair if palindrome?(product)
     end
-    i = result.map { |arr| arr[0] * arr[1] }
-    @palindromes = i.map { |num| num if palindrome?(num) }.compact
-    # p @palindromes
-    self
-  end
-
-  def palindrome?(num)
-    num.to_s.chars.reverse.join.to_i == num
   end
 
   def largest
-    @target_palindrome = @palindromes.max
-    self
+    Palindrome.new(*palindromes.max)
   end
 
   def smallest
-    @target_palindrome = @palindromes.min
-    self
+    Palindrome.new(*palindromes.min)
   end
 
-  def value
-    @target_palindrome
+  private
+
+  def pairs
+    (min_factor..max_factor).to_a.repeated_combination(2).lazy
   end
 
-  def factors
-    result = []
-    (min_factor..max_factor).each do |num|
-      (min_factor..max_factor).each { |num2| result << [num, num2] if num * num2 == @target_palindrome }
-    end
-    result.map(&:sort).uniq
+  def palindrome?(num)
+    num.to_s.reverse == num.to_s
   end
 end
