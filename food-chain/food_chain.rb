@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 # Food Chain
 module FoodChain
   ANIMALS = [
-    ['fly', "I don't know why she swallowed the fly. Perhaps she'll die."],
+    ['fly', "I don't know why she swallowed the fly. Perhaps she'll die.\n"],
     ['spider', 'It wriggled and jiggled and tickled inside her.'],
     ['bird', 'How absurd to swallow a bird!'],
     ['cat', 'Imagine that, to swallow a cat!'],
@@ -22,22 +20,15 @@ module FoodChain
         I know an old lady who swallowed a #{animal[0]}.
         #{animal[1]}
       TEXT
-      if i > 0 || i == 7
-        until i == 0
-          song += <<~TEXT
-            She swallowed the #{animal[0]} to catch the #{ANIMALS[i - 1][0]}.
-            #{ANIMALS[i - 1][1]}
-          TEXT
-          i -= 1
-        end
+      break if i == 7
+
+      until i.zero?
+        song += <<~TEXT
+          She swallowed the #{ANIMALS[i][0]} to catch the #{ANIMALS[i - 1][0]}#{(i - 1) == 1 ? ' that wriggled and jiggled and tickled inside her.' : '.'}#{i < 2 ? "\n" + ANIMALS[i - 1][1] : nil}
+        TEXT
+        i -= 1
       end
     end
-    
-    p song
-    'I know an old lady who swallowed a fly.\nI don\'t know why she swallowed the fly. Perhaps she\'ll die.'
+    song
   end
-
 end
-
-# each iteration builds a verse
-# 8 verses
