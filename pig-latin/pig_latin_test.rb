@@ -34,52 +34,52 @@ class PigLatinTest < Minitest::Test
   end
 
   def test_word_beginning_with_p
-    skip
+    # skip
     assert_equal "igpay", PigLatin.translate("pig")
   end
 
   def test_word_beginning_with_k
-    skip
+    # skip
     assert_equal "oalakay", PigLatin.translate("koala")
   end
 
   def test_word_beginning_with_x
-    skip
+    # skip
     assert_equal "enonxay", PigLatin.translate("xenon")
   end
 
   def test_word_beginning_with_q_without_a_following_u
-    skip
+    # skip
     assert_equal "atqay", PigLatin.translate("qat")
   end
 
   def test_word_beginning_with_ch
-    skip
+    # skip
     assert_equal "airchay", PigLatin.translate("chair")
   end
 
   def test_word_beginning_with_qu
-    skip
+    # skip
     assert_equal "eenquay", PigLatin.translate("queen")
   end
 
   def test_word_beginning_with_qu_and_a_preceding_consonant
-    skip
+    # skip
     assert_equal "aresquay", PigLatin.translate("square")
   end
 
   def test_word_beginning_with_th
-    skip
+    # skip
     assert_equal "erapythay", PigLatin.translate("therapy")
   end
 
   def test_word_beginning_with_thr
-    skip
+    # skip
     assert_equal "ushthray", PigLatin.translate("thrush")
   end
 
   def test_word_beginning_with_sch
-    skip
+    # skip
     assert_equal "oolschay", PigLatin.translate("school")
   end
 
@@ -94,22 +94,22 @@ class PigLatinTest < Minitest::Test
   end
 
   def test_y_is_treated_like_a_consonant_at_the_beginning_of_a_word
-    skip
+    # skip
     assert_equal "ellowyay", PigLatin.translate("yellow")
   end
 
   def test_y_is_treated_like_a_vowel_at_the_end_of_a_consonant_cluster
-    skip
+    # skip
     assert_equal "ythmrhay", PigLatin.translate("rhythm")
   end
 
   def test_y_as_second_letter_in_two_letter_word
-    skip
+    # skip
     assert_equal "ymay", PigLatin.translate("my")
   end
 
   def test_a_whole_phrase
-    skip
+    # skip
     assert_equal "ickquay astfay unray", PigLatin.translate("quick fast run")
   end
 end

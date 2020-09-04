@@ -2,48 +2,43 @@
 
 # Pig Latin
 class PigLatin
-  VOWEL_SOUNDS = %w[a e i o u yt xr].freeze
-  CONSONANTS = [].freeze
-  PIG_END = 'ay'
-
-  attr_reader :text
-
-  def initialize(text)
-    @text = text
-  end
-
   def self.translate(input)
-    PigLatin.new(input).translate
+    new(input).translate
   end
 
   def translate
-    if starts_with_vowel_sound?
-      return "#{text}#{PIG_END}"
-    end
-  
+    english
+      .split(' ')
+      .map { |word| translate_word(word) }
+      .join(' ')
   end
 
-  def starts_with_vowel_sound?
-    first = text.chars.first
-    if %w[y x].include?(first)
-      first = text.chars.each_slice(2).first.join
-    end
+  private
 
-    VOWEL_SOUNDS.include?(first)
+  VOWEL_SOUNDS = %w[a e i o u yt xr].freeze
+  TRIGRAPHS = %w[sch thr squ].freeze
+  DIGRAPHS = %w[ch qu th rh].freeze
+  SUFFIX = 'ay'
+
+  attr_reader :english
+
+  def initialize(english)
+    @english = english
   end
 
+  def translate_word(word)
+    word.chars.rotate(rotation(word)).join + SUFFIX
+  end
+
+  def prefixed_with?(sounds, word)
+    sounds.any? { |sound| word.start_with?(sound) }
+  end
+
+  def rotation(word)
+    return 0 if prefixed_with?(VOWEL_SOUNDS, word)
+    return 3 if prefixed_with?(TRIGRAPHS, word)
+    return 2 if prefixed_with?(DIGRAPHS, word)
+
+    1
+  end
 end
-
-
-# vowel sounds:
-# a, e, i, o, u, yt, xr
-# add "ay" to end
-
-# consonant sounds
-# one or more consts move to the end of word then add "ay"
-
-# 
-# If a word contains a "y" after a consonant cluster or as the second letter in a two letter word it makes a vowel sound (e.g. "rhythm" -> "ythmrhay", "my" -> "ymay").
-
-
-
