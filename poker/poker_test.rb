@@ -3,13 +3,14 @@ require_relative 'poker'
 
 class PokerTest < Minitest::Test
   def test_one_hand
+    skip
     high_of_jack = %w(4S 5S 7H 8D JC)
     game = Poker.new([high_of_jack])
     assert_equal [high_of_jack], game.best_hand
   end
 
   def test_highest_card
-    skip
+    # skip
     high_of_8 = %w(4S 5H 6S 8D 2H)
     high_of_queen = %w(2S 4H 6C 9D QH)
     game = Poker.new([high_of_8, high_of_queen])
@@ -130,7 +131,7 @@ class PokerTest < Minitest::Test
 
   def test_flush_vs_full
     skip
-    flush_to_8 = %w(3H 6H 7H 8H 5C)
+    flush_to_8 = %w(3H 6H 7H 8H 5H)
     full = %w(4S 5H 4C 5D 4H)
     game = Poker.new([flush_to_8, full])
     assert_equal [full], game.best_hand
