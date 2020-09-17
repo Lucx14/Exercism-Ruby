@@ -1,171 +1,22 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 # Poker
 class Poker
-  attr_reader :list_of_hands
+  attr_reader :hands
   def initialize(list_of_hands)
-    @list_of_hands = list_of_hands
+    @hands = list_of_hands.map { |hand| Hand.new(hand) }
   end
 
   def best_hand
-    return list_of_hands if list_of_hands.length == 1
-
-    res = []
-    xy = list_of_hands.map { |hand| Hand.new(hand) }
-
-    if xy.first.rank_position < xy.last.rank_position
-      res << list_of_hands.first
-    elsif xy.first.rank_position > xy.last.rank_position
-      res << list_of_hands.last
-    else
-      xrank = xy.map(&:rank).uniq[0]
-      res << compare_matching_hands(list_of_hands, xrank)
-    end
-    res
-  end
-
-  def compare_matching_hands(list_of_hands, rank)
-    zz = list_of_hands.map { |hand| Hand.new(hand) }
-    if rank == :high_card
-      f = zz.first.data[:ranks].map(&:score).sort.reverse
-      l = zz.last.data[:ranks].map(&:score).sort.reverse
-      f.each_with_index do |score, i|
-        if score > l[i]
-          return list_of_hands.first
-        elsif score < l[i]
-          return list_of_hands.last
-        end
-      end
-      list_of_hands
-    elsif rank == :one_pair
-      if zz.first.data[:pair].first.score > zz.last.data[:pair].first.score
-        list_of_hands.first
-      elsif zz.first.data[:pair].first.score < zz.last.data[:pair].first.score
-        list_of_hands.last
-      else
-        if zz.first.data[:kickers].first.score > zz.last.data[:kickers].first.score
-          list_of_hands.first
-        elsif zz.first.data[:kickers].first.score < zz.last.data[:kickers].first.score
-          list_of_hands.last
-        end
-      end
-    elsif rank == :two_pair
-      if zz.first.data[:pairs].first.first.score > zz.last.data[:pairs].first.first.score
-        list_of_hands.first
-      elsif zz.first.data[:pairs].first.first.score < zz.last.data[:pairs].first.first.score
-        list_of_hands.last
-      else
-        if zz.first.data[:pairs].last.first.score > zz.last.data[:pairs].last.first.score
-          list_of_hands.first
-        elsif zz.first.data[:pairs].last.first.score < zz.last.data[:pairs].last.first.score
-          list_of_hands.last
-        else
-          if zz.first.data[:kickers].first.score > zz.last.data[:kickers].first.score
-            list_of_hands.first
-          elsif zz.first.data[:kickers].first.score < zz.last.data[:kickers].first.score
-            list_of_hands.last
-          end
-        end
-      end
-    elsif rank == :three_of_a_kind
-      if zz.first.data[:triplet].first.score > zz.last.data[:triplet].first.score
-        list_of_hands.first
-      elsif zz.first.data[:triplet].first.score < zz.last.data[:triplet].first.score
-        list_of_hands.last
-      else
-        if zz.first.data[:kickers].first.score > zz.last.data[:kickers].first.score
-          list_of_hands.first
-        elsif zz.first.data[:kickers].first.score < zz.last.data[:kickers].first.score
-          list_of_hands.last
-        end
-      end
-    elsif rank == :straight
-      if zz.first.data[:ranks].first.score > zz.last.data[:ranks].first.score
-        list_of_hands.first
-      elsif zz.first.data[:ranks].first.score < zz.last.data[:ranks].first.score
-        list_of_hands.last
-      end
-    elsif rank == :flush
-      f = zz.first.data[:ranks].map(&:score).sort.reverse
-      l = zz.last.data[:ranks].map(&:score).sort.reverse
-      f.each_with_index do |score, i|
-        return list_of_hands.first if score > l[i]
-      end
-      list_of_hands.last
-    elsif rank == :full_house
-      if zz.first.data[:triplet].first.score > zz.last.data[:triplet].first.score
-        list_of_hands.first
-      elsif zz.first.data[:triplet].first.score < zz.last.data[:triplet].first.score
-        list_of_hands.last
-      else
-        if zz.first.data[:pair].first.score > zz.last.data[:pair].first.score
-          list_of_hands.first
-        elsif zz.first.data[:pair].first.score < zz.last.data[:pair].first.score
-          list_of_hands.last
-        end
-      end
-    elsif rank == :four_of_a_kind
-      if zz.first.data[:quadruplet].first.score > zz.last.data[:quadruplet].first.score
-        list_of_hands.first
-      elsif zz.first.data[:quadruplet].first.score < zz.last.data[:quadruplet].first.score
-        list_of_hands.last
-      else
-        if zz.first.data[:kickers].first.score > zz.last.data[:kickers].first.score
-          list_of_hands.first
-        elsif zz.first.data[:kickers].first.score < zz.last.data[:kickers].first.score
-          list_of_hands.last
-        end
-      end
-    elsif rank == :straight_flush
-      if zz.first.data[:ranks].first.score > zz.last.data[:ranks].first.score
-        list_of_hands.first
-      elsif zz.first.data[:ranks].first.score < zz.last.data[:ranks].first.score
-        list_of_hands.last
-      end
-    end
-  end
-end
-
-# Card
-class Card
-  CARD_POINTS = {
-    '2' => 2,
-    '3' => 3,
-    '4' => 4,
-    '5' => 5,
-    '6' => 6,
-    '7' => 7,
-    '8' => 8,
-    '9' => 9,
-    '10' => 10,
-    'J' => 11,
-    'Q' => 12,
-    'K' => 13,
-    'A' => 14
-  }.freeze
-  attr_reader :rank, :suit, :score
-  def initialize(card)
-    @suit = evaluate_suit(card)
-    @rank = card.split('').reverse.drop(1).reverse.join
-    @score = CARD_POINTS[rank]
-  end
-
-  def evaluate_suit(card)
-    case card.split('').last
-    when 'S' then :spades
-    when 'H' then :hearts
-    when 'D' then :diamonds
-    when 'C' then :clubs
-    else raise ArgumentError, 'invalid card!'
-    end
+    best = hands.max
+    hands.select { |h| h == best }.map(&:to_s)
   end
 end
 
 # Hand
 class Hand
-  RANKS = %i[straight_flush four_of_a_kind full_house flush straight three_of_a_kind two_pair one_pair high_card].freeze
+  include Comparable
+  RANKS = %i[high_card one_pair two_pair three_of_a_kind straight flush full_house four_of_a_kind straight_flush].freeze
 
   attr_reader :cards, :rank, :data
 
@@ -176,7 +27,51 @@ class Hand
   end
 
   def <=>(other)
-    rank_position <=> other.rank_position
+    return rank_position <=> other.rank_position unless rank == other.rank
+
+    case rank
+    when :four_of_a_kind
+      unless data[:quadruplet].first.score == other.data[:quadruplet].first.score
+        return data[:quadruplet].first.score <=> other.data[:quadruplet].first.score
+      end
+
+      data[:kickers].first.score <=> other.data[:kickers].first.score
+    when :full_house
+      unless data[:triplet].first.score == other.data[:triplet].first.score
+        return data[:triplet].first.score <=> other.data[:triplet].first.score
+      end
+      unless data[:pair].first.score == other.data[:pair].first.score
+        return data[:pair].first.score <=> other.data[:pair].first.score
+      end
+
+      0
+    when :three_of_a_kind
+      unless data[:triplet].first.score == other.data[:triplet].first.score
+        return data[:triplet].first.score <=> other.data[:triplet].first.score
+      end
+
+      data[:kickers].first.score <=> other.data[:kickers].first.score
+    when :two_pair
+      unless data[:pairs].first.first.score == other.data[:pairs].first.first.score
+        return data[:pairs].first.first.score <=> other.data[:pairs].first.first.score
+      end
+      unless data[:pairs].last.first.score == other.data[:pairs].last.first.score
+        return data[:pairs].last.first.score <=> other.data[:pairs].last.first.score
+      end
+
+      data[:kickers].first.score <=> other.data[:kickers].first.score
+    when :one_pair
+      unless data[:pair].first.score == other.data[:pair].first.score
+        return data[:pair].first.score <=> other.data[:pair].first.score
+      end
+
+      data[:kickers].first.score <=> other.data[:kickers].first.score
+    else
+      data[:ranks].map(&:score).zip(other.data[:ranks].map(&:score)) do |a, b|
+        return a <=> b unless a == b
+      end
+      0
+    end
   end
 
   def rank_position
@@ -222,10 +117,8 @@ class Hand
   end
 
   def cards_sorted_by_points
-    if cards.map(&:rank).sort == %w[2 3 4 5 A]
-      return cards.sort_by(&:score).take(4).reverse
-    end
-    
+    return cards.sort_by(&:score).take(4).reverse if cards.map(&:rank).sort == %w[2 3 4 5 A]
+
     cards.sort_by(&:score).reverse
   end
 
@@ -282,5 +175,48 @@ class Hand
     cards.map { |card| card if ranks.include?(card.rank) }.compact.sort_by(&:score).each_slice(2).to_a.reverse
   end
 
-  # maybe a method that compare itself with another instance??
+  def to_s
+    cards.map(&:string_representation)
+  end
+end
+
+# Card
+class Card
+  include Comparable
+  CARD_POINTS = {
+    '2' => 2,
+    '3' => 3,
+    '4' => 4,
+    '5' => 5,
+    '6' => 6,
+    '7' => 7,
+    '8' => 8,
+    '9' => 9,
+    '10' => 10,
+    'J' => 11,
+    'Q' => 12,
+    'K' => 13,
+    'A' => 14
+  }.freeze
+  attr_reader :rank, :suit, :score, :string_representation
+  def initialize(card)
+    @string_representation = card
+    @suit = evaluate_suit(card)
+    @rank = card.slice(0...-1)
+    @score = CARD_POINTS[rank]
+  end
+
+  def evaluate_suit(card)
+    case card.split('').last
+    when 'S' then :spades
+    when 'H' then :hearts
+    when 'D' then :diamonds
+    when 'C' then :clubs
+    else raise ArgumentError, 'invalid card!'
+    end
+  end
+
+  def <=>(other)
+    score <=> other.score
+  end
 end
