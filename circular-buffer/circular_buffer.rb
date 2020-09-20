@@ -9,37 +9,34 @@ class CircularBuffer
 
   def initialize(size)
     @size = size
-    @buffer = (1..size).map { [] }
+    @buffer = []
   end
 
   def write(data)
-    raise CircularBuffer::BufferFullException if empty_nodes.zero?
+    raise CircularBuffer::BufferFullException if full?
 
-    buffer.detect(&:empty?) << data
+    buffer << data
   end
 
   def read
-    raise CircularBuffer::BufferEmptyException if empty_nodes == size
+    raise CircularBuffer::BufferEmptyException if buffer.empty?
 
-    buffer.rotate!
-    buffer.last.pop
+    buffer.shift
   end
 
   def write!(data)
-    return write(data) unless empty_nodes.zero?
+    read if full?
 
-    buffer.rotate!
-    buffer.last.pop
-    buffer.last << data
+    write(data)
   end
 
   def clear
-    buffer.each(&:pop)
+    buffer.clear
   end
 
   private
 
-  def empty_nodes
-    buffer.select(&:empty?).size
+  def full?
+    buffer.size == size
   end
 end
