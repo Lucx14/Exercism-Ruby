@@ -4,7 +4,7 @@
 class CustomSet
   attr_reader :data
 
-  def initialize(data)
+  def initialize(data = [])
     @data = data.uniq
   end
 
@@ -12,8 +12,9 @@ class CustomSet
     data.include?(element)
   end
 
-  def add()
-
+  def add(element)
+    data << element unless data.member?(element)
+    self
   end
 
   def empty?
@@ -21,16 +22,27 @@ class CustomSet
   end
 
   def subset?(other)
-    if other.data.empty? && data.empty?
-      true
-    elsif other.data.length.positive? && data.empty?
-      true
-    elsif other.data.sort == data
-      true
-    elsif (other.data - data).any? && (data - other.data).empty?
-      true
-    else
-      false
-    end
+    data.all? { |element| other.data.member?(element) }
+  end
+
+  def disjoint?(other)
+    # (data - other.data) == data
+    data.none? { |element| other.data.member?(element) }
+  end
+
+  def ==(other)
+    subset?(other) && other.subset?(self)
+  end
+
+  def intersection(other)
+    CustomSet.new(data.select { |e| other.member?(e) })
+  end
+
+  def difference(other)
+    CustomSet.new(data.reject { |e| other.member?(e) })
+  end
+
+  def union(other)
+    CustomSet.new(data + other.data)
   end
 end
