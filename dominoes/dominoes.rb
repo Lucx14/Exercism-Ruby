@@ -1,34 +1,48 @@
 # frozen_string_literal: true
 
+require 'set'
+
 # Dominoes
 class Dominoes
   def self.chain?(dominoes)
-    if dominoes.length == 1
-      return false if dominoes[0][0] != dominoes[0][1]
+    new(dominoes).chain?
+  end
+
+  def chain?
+    eulerian? && connected?
+  end
+
+  private
+
+  attr_reader :dominoes
+
+  def initialize(dominoes)
+    @dominoes = dominoes
+  end
+
+  def connected?
+    connected_components.then do |cc|
+      cc.empty? || cc.values.first.count == domino_numbers.count
     end
+  end
 
-    all_possible_layouts = dominoes.permutation.to_a
-
-    result = all_possible_layouts.map do |possibility|
-      original_dominoes = possibility.each_with_index.map { |domino, i| [i + 1, domino] }
-      reversed_dominoes = possibility.map(&:reverse).each_with_index.map { |domino, i| [i + 1, domino] }
-      domino_shapes = original_dominoes + reversed_dominoes
-
-      domino_shapes
-        .combination(dominoes.length)
-        .to_a
-        .select { |combo| combo.map(&:first).uniq.length == dominoes.length }
-        .map { |group| group.map(&:last) }
-        .find do |combination|
-          result = true
-          (0..dominoes.length - 2).each do |i|
-            result = false if combination[i].last != combination[i + 1].first
-            result = false if combination.flatten.first != combination.flatten.last
-          end
-          combination if result
-        end
+  def connected_components
+    sets = domino_numbers.map { |x| [x, Set.new([x])] }.to_h
+    dominoes.reject { |x, y| x == y }.map do |side1, side2|
+      sets[side1] = sets[side1].union(sets[side2])
+      sets[side1].map { |x| sets[x] = sets[side1] }
     end
+    sets
+  end
 
-    result.compact.first
+  def domino_numbers
+    dominoes.flatten.uniq
+  end
+
+  def eulerian?
+    dominoes
+      .flatten
+      .group_by(&:itself)
+      .all? { |_, v| v.count.even? }
   end
 end
